@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HealthBot AI</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+      :root {
+        --bg-color: #f4f4f9;
+        --container-bg: #ffffff;
+        --text-color: #000;
+        --bot-color: #27ae60;
+        --user-color: #2980b9;
+        --border-color: #ccc;
+        --bubble-user: #2980b9;
+        --bubble-bot: #2e2e2e;
+      }
+
+      body.dark {
+        --bg-color: #121212;
+        --container-bg: #1e1e1e;
+        --text-color: #f5f5f5;
+        --bot-color: #6ddf92;
+        --user-color: #4da6ff;
+        --border-color: #333;
+        --bubble-user: #4da6ff;
+        --bubble-bot: #2a2a2a;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        transition: background 0.3s ease;
+      }
+
+      .chat-container {
+        width: 420px;
+        background: var(--container-bg);
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        transition: background 0.3s ease;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .chat-title {
+        display: flex;
+        align-items: center;
+      }
+
+      .chat-header img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .theme-toggle {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-color);
+        transition: transform 0.2s ease;
+      }
+      .theme-toggle:hover {
+        transform: rotate(20deg);
+      }
+
+      .chat-box {
+        height: 340px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+        backdrop-filter: blur(6px);
+        transition: border 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        display: flex;
+        margin: 6px 0;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      .message img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        margin-top: auto;
+      }
+
+      .msg-bubble {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 15px;
+        line-height: 1.4;
+        margin: 0 8px;
+      }
+
+      .user .msg-bubble {
+        background: var(--bubble-user);
+        color: #fff;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+      }
+
+      .bot .msg-bubble {
+        background: var(--bubble-bot);
+        color: var(--bot-color);
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Typing dots */
+      .typing {
+        display: flex;
+        align-items: center;
+      }
+      .typing span {
+        width: 6px;
+        height: 6px;
+        background: var(--bot-color);
+        border-radius: 50%;
+        margin: 0 2px;
+        display: inline-block;
+        animation: blink 1.2s infinite;
+      }
+      .typing span:nth-child(2) {
+        animation-delay: 1.2s;
+      }
+      .typing span:nth-child(3) {
+        animation-delay: 1.4s;
+      }
+      @keyframes blink {
+        0%,
+        80%,
+        100% {
+          opacity: 0.2;
+        }
+        40% {
+          opacity: 1;
+        }
+      }
+
+      .input-container {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 6px 8px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--text-color);
+        font-size: 14px;
+      }
+
+      .send-btn {
+        padding: 8px 16px;
+        background: var(--user-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: background 0.2s ease;
+      }
+      .send-btn:hover {
+        background: #1c6dd0;
+      }
+
+      .options {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .options button {
+        margin: 4px 4px 0 0;
+        padding: 6px 12px;
+        background: var(--bot-color);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        font-size: 13px;
+      }
+      .options button:hover {
+        background: #1f6b42;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-title">
+          <img
+            src="https://cdn-icons-png.flaticon.com/128/11066/11066885.png"
+            alt="HealthBot"
+          />
+          <h2>HealthBot AI</h2>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      </div>
+
+      <div id="chatBox" class="chat-box"></div>
+
+      <div class="input-container">
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Type your message..."
+          onkeypress="if(event.key==='Enter'){sendMessage()}"
+        />
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        const toggleBtn = document.querySelector(".theme-toggle");
+        toggleBtn.textContent = document.body.classList.contains("dark")
+          ? "☀️"
+          : "🌙";
+      }
+
+      function addMessage(message, sender, options = null) {
+        const chatBox = document.getElementById("chatBox");
+        const msgWrapper = document.createElement("div");
+        msgWrapper.className = "message " + sender;
+
+        const avatar = document.createElement("img");
+        avatar.src =
+          sender === "bot"
+            ? "https://cdn-icons-png.flaticon.com/128/11066/11066885.png"
+            : "https://cdn-icons-png.flaticon.com/128/15181/15181334.png";
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+        bubble.textContent =
+          sender === "user" ? message : "HealthBot: " + message;
+
+        msgWrapper.appendChild(sender === "bot" ? avatar : bubble);
+        msgWrapper.appendChild(sender === "bot" ? bubble : avatar);
+
+        chatBox.appendChild(msgWrapper);
+
+        if (options) {
+          const btnContainer = document.createElement("div");
+          btnContainer.className = "options";
+          options.forEach((opt) => {
+            const btn = document.createElement("button");
+            btn.textContent = opt;
+            btn.onclick = () => {
+              document.getElementById("userInput").value = opt;
+              sendMessage();
+            };
+            btnContainer.appendChild(btn);
+          });
+          chatBox.appendChild(btnContainer);
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return msgWrapper; // return in case we want to delete later
+      }
+
+      function showTyping() {
+        const chatBox = document.getElementById("chatBox");
+        const typingWrapper = document.createElement("div");
+        typingWrapper.className = "message bot typing-indicator";
+
+        const avatar = document.createElement("img");
+        avatar.src =
+          "https://cdn-icons-png.flaticon.com/128/11066/11066885.png";
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble typing";
+        bubble.innerHTML = "<span></span><span></span><span></span>";
+
+        typingWrapper.appendChild(avatar);
+        typingWrapper.appendChild(bubble);
+        chatBox.appendChild(typingWrapper);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return typingWrapper;
+      }
+
+      function removeTyping(typingElement) {
+        if (typingElement && typingElement.parentNode) {
+          typingElement.parentNode.removeChild(typingElement);
+        }
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("userInput");
+        const message = input.value.trim();
+        if (message === "") return;
+
+        addMessage(message, "user");
+        input.value = "";
+
+        const goodbyes = ["bye", "goodbye", "see you", "take care", "later"];
+        if (goodbyes.some((bye) => message.toLowerCase().includes(bye))) {
+          addMessage(
+            "Goodbye! 👋 Stay healthy and take care. Come back anytime if you have more questions!",
+            "bot"
+          );
+          return;
+        }
+
+        // Show typing animation
+        const typingIndicator = showTyping();
+
+        fetch("http://127.0.0.1:8000/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: message }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            removeTyping(typingIndicator);
+            if (data.reply.includes("Do you want to know")) {
+              addMessage(data.reply, "bot", ["Symptoms", "Care", "Prevention"]);
+            } else {
+              addMessage(data.reply, "bot");
+            }
+          })
+          .catch((error) => {
+            removeTyping(typingIndicator);
+            addMessage("Sorry, there was an error.", "bot");
+            console.error(error);
+          });
+      }
+    </script>
+  </body>
+</html>
