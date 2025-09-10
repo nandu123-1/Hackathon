@@ -3,7 +3,6 @@ import spacy
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from fastapi.responses import FileResponse
 
 # === Load lightweight NLP ===
 nlp = spacy.blank("en")
@@ -356,6 +355,7 @@ class ChatRequest(BaseModel):
 def chat(req: ChatRequest):
     reply = get_bot_response(req.message)
     return {"reply": reply}
+
 
 
 
