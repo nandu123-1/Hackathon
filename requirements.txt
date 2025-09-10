@@ -2,3 +2,5 @@ fastapi
 uvicorn[standard]
 spacy
 gunicorn
+StaticFiles
+FileResponse
