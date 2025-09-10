@@ -3,7 +3,6 @@ import spacy
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 # === Load lightweight NLP ===
@@ -348,8 +347,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Serve index.html at root
 @app.get("/")
@@ -363,4 +360,5 @@ class ChatRequest(BaseModel):
 def chat(req: ChatRequest):
     reply = get_bot_response(req.message)
     return {"reply": reply}
+
 
